@@ -1,0 +1,27 @@
+{
+  "$schema": "https://wails.io/schemas/config.v2.json",
+  "name": "micryptlol",
+  "outputfilename": "micryptlol",
+  "frontend:install": "npm install",
+  "frontend:build": "npm run build",
+  "frontend:dev:watcher": "npm run dev",
+  "frontend:dev:serverUrl": "auto",
+  "author": {
+    "name": "hld19",
+    "email": "-"
+  },
+  "info": {
+    "companyName": "Micrypt",
+    "productName": "Micrypt",
+    "productVersion": "1.0.0",
+    "copyright": "Copyright © 2025",
+    "comments": "lolok"
+  },
+  "nsisinstaller": {
+    "icon": "build/appicon.png"
+  },
+  "assetdir": "frontend/dist",
+  "appicon": "build/appicon.png",
+  "macosicon": "build/icons.icns",
+  "windowsicon": "build/appicon.png"
+}
