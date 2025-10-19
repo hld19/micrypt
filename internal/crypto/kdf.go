@@ -23,6 +23,7 @@ const (
 	SaltLength             = 32
 	kdfInfoLabel           = "micryptlol/v1/key-schedule"
 	KDFMetadataVersion     = 1
+	maxPIMIncrement        = 1000000
 )
 
 type KDFParams struct {
@@ -107,7 +108,11 @@ func CreateKeySchedule(password string, keyfiles [][]byte, pim uint32, mnemonicS
 
 	derivedParams := cloneParams(params)
 	if pim > 0 {
-		derivedParams.Time += pim
+		next, err := applyPIMIncrement(derivedParams.Time, pim)
+		if err != nil {
+			return nil, nil, err
+		}
+		derivedParams.Time = next
 	}
 
 	derived := argon2.IDKey(combinedPassword, derivedParams.Salt, derivedParams.Time, derivedParams.Memory, derivedParams.Threads, derivedParams.KeyLength)
@@ -196,7 +201,11 @@ func DeriveKeyScheduleFromPassword(password string, keyfiles [][]byte, pim uint3
 
 	derivedParams := cloneParams(meta.Params)
 	if effectivePIM > 0 {
-		derivedParams.Time += effectivePIM
+		next, err := applyPIMIncrement(derivedParams.Time, effectivePIM)
+		if err != nil {
+			return nil, err
+		}
+		derivedParams.Time = next
 	}
 
 	derived := argon2.IDKey(combinedPassword, derivedParams.Salt, derivedParams.Time, derivedParams.Memory, derivedParams.Threads, derivedParams.KeyLength)
@@ -358,6 +367,20 @@ func deriveHKDFKey(ikm, salt []byte, info string) ([]byte, error) {
 		return nil, fmt.Errorf("failed to derive hkdf key: %w", err)
 	}
 	return key, nil
+}
+
+func applyPIMIncrement(base, pim uint32) (uint32, error) {
+	if pim == 0 {
+		return base, nil
+	}
+	if pim > maxPIMIncrement {
+		return 0, fmt.Errorf("pim %d exceeds maximum %d", pim, maxPIMIncrement)
+	}
+	limit := ^uint32(0) - base
+	if pim > limit {
+		return 0, fmt.Errorf("pim %d causes iteration overflow", pim)
+	}
+	return base + pim, nil
 }
 
 func validateParams(params *KDFParams) error {

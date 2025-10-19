@@ -25,6 +25,8 @@ const (
 
 	metadataMagic   = "MCMETA2"
 	metadataVersion = 2
+	maxMetadataSize = 1 << 20
+	maxIndexSize    = 1 << 24
 )
 
 type metadataFile struct {
@@ -963,6 +965,9 @@ func loadContainerFile(path string) (*metadataFile, []byte, [][]byte, error) {
 	if err := binary.Read(file, binary.BigEndian, &metaLen); err != nil {
 		return nil, nil, nil, err
 	}
+	if metaLen == 0 || metaLen > maxMetadataSize {
+		return nil, nil, nil, errors.New("vault metadata section too large")
+	}
 	metaBytes := make([]byte, metaLen)
 	if _, err := io.ReadFull(file, metaBytes); err != nil {
 		return nil, nil, nil, err
@@ -971,6 +976,9 @@ func loadContainerFile(path string) (*metadataFile, []byte, [][]byte, error) {
 	var indexLen uint32
 	if err := binary.Read(file, binary.BigEndian, &indexLen); err != nil {
 		return nil, nil, nil, err
+	}
+	if indexLen == 0 || indexLen > maxIndexSize {
+		return nil, nil, nil, errors.New("vault index section too large")
 	}
 	encryptedIndex := make([]byte, indexLen)
 	if _, err := io.ReadFull(file, encryptedIndex); err != nil {

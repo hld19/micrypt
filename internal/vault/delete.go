@@ -22,11 +22,14 @@ func DeleteVault(path string) error {
 	if err != nil {
 		return err
 	}
+	if info.Mode()&os.ModeSymlink != 0 {
+		return errors.New("refusing to delete vault via symlink")
+	}
 	if info.IsDir() {
 		return errors.New("expected vault file but found directory")
 	}
 
-	if err := secureOverwrite(path, info.Size(), defaultWipePasses); err != nil {
+	if err := secureOverwrite(path, info, defaultWipePasses); err != nil {
 		return err
 	}
 
@@ -41,12 +44,9 @@ func DeleteVault(path string) error {
 	return nil
 }
 
-func secureOverwrite(path string, size int64, passes int) error {
+func secureOverwrite(path string, info os.FileInfo, passes int) error {
 	if passes <= 0 {
 		passes = 1
-	}
-	if size == 0 {
-		return nil
 	}
 
 	handle, err := os.OpenFile(path, os.O_WRONLY, 0)
@@ -54,6 +54,19 @@ func secureOverwrite(path string, size int64, passes int) error {
 		return err
 	}
 	defer handle.Close()
+
+	stat, err := handle.Stat()
+	if err != nil {
+		return err
+	}
+	if !os.SameFile(info, stat) || stat.Mode()&os.ModeSymlink != 0 {
+		return errors.New("vault file changed during delete")
+	}
+
+	size := stat.Size()
+	if size == 0 {
+		return nil
+	}
 
 	buf := make([]byte, wipeBufferSize)
 

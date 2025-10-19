@@ -1,10 +1,10 @@
 .PHONY: build dev tidy test clean
 
 build:
-	wails build -skipmodtidy
+	wails build
 
 dev:
-	wails dev -skipmodtidy
+	wails dev
 
 tidy:
 	GOCACHE=$(PWD)/.gocache GOFLAGS=-mod=mod go mod tidy
