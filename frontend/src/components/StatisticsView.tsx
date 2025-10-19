@@ -50,7 +50,7 @@ export default function StatisticsView() {
       {/* Header */}
       <header className="p-8 bg-neuro-bg-light dark:bg-neuro-bg-dark shadow-neuro-light-sm dark:shadow-neuro-dark-sm sticky top-0 z-10">
         <div>
-          <h2 className="text-5xl font-bold text-blue-600 dark:text-blue-400 mb-2 tracking-tight">
+          <h2 className="text-5xl font-bold text-gray-900 dark:text-gray-100 mb-2 tracking-tight">
             Statistics
           </h2>
           <p className="text-neuro-text-secondary-light dark:text-neuro-text-secondary-dark font-semibold text-lg">Your vault insights and activity</p>
@@ -116,7 +116,7 @@ export default function StatisticsView() {
               {loading ? '...' : 'Unlocked'}
             </div>
             <div className="flex items-center gap-2">
-              <div className="w-3 h-3 rounded-full bg-green-500"></div>
+              <div className="w-3 h-3 rounded-full bg-gray-500"></div>
               <div className="text-xs text-neuro-text-secondary-light dark:text-neuro-text-secondary-dark font-bold">
                 Active
               </div>
@@ -130,7 +130,7 @@ export default function StatisticsView() {
           {loading ? (
             <div className="flex items-center justify-center h-64">
               <div className="text-center space-y-4">
-                <div className="w-12 h-12 border-4 border-neuro-text-muted-light dark:border-neuro-text-muted-dark border-t-green-500 rounded-full mx-auto"></div>
+                <div className="w-12 h-12 border-4 border-neuro-text-muted-light dark:border-neuro-text-muted-dark border-t-gray-500 rounded-full mx-auto"></div>
                 <p className="text-neuro-text-secondary-light dark:text-neuro-text-secondary-dark font-semibold">Loading category data...</p>
               </div>
             </div>
@@ -211,7 +211,7 @@ export default function StatisticsView() {
               <div className="flex justify-between p-4 rounded-neuro bg-neuro-bg-light dark:bg-neuro-bg-dark shadow-neuro-light dark:shadow-neuro-dark text-neuro-text-primary-light dark:text-neuro-text-primary-dark">
                 <span className="font-bold">Status</span>
                 <span className="font-bold flex items-center gap-2">
-                  <div className="w-3 h-3 rounded-full bg-green-500 shadow-lg"></div>
+                  <div className="w-3 h-3 rounded-full bg-gray-500 shadow-lg"></div>
                   good state
                 </span>
               </div>

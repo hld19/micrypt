@@ -12,6 +12,8 @@ export function DeleteFile(arg1:string):Promise<void>;
 
 export function DeleteVault():Promise<void>;
 
+export function DeleteVaultAtPath(arg1:string):Promise<void>;
+
 export function ExtractFile(arg1:string):Promise<void>;
 
 export function GetCategoryStats():Promise<Record<string, number>>;

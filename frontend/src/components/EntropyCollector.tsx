@@ -65,7 +65,7 @@ export default function EntropyCollector({ onComplete }: EntropyCollectorProps) 
             <div className="text-center space-y-6">
               <div className="flex justify-center">
                 <div className="w-24 h-24 rounded-full neuro-card flex items-center justify-center">
-                  <ShieldIcon size={56} className="text-green-500" />
+                  <ShieldIcon size={56} className="text-gray-400 dark:text-gray-200" />
                 </div>
               </div>
               <div>
@@ -80,7 +80,7 @@ export default function EntropyCollector({ onComplete }: EntropyCollectorProps) 
 
             <div className="neuro-inset rounded-neuro p-6">
               <div className="flex items-center justify-center gap-3 text-sm">
-                <div className="w-3 h-3 rounded-full bg-green-500"></div>
+                <div className="w-3 h-3 rounded-full bg-gray-500"></div>
                 <span className="font-bold text-neuro-text-primary-light dark:text-neuro-text-primary-dark">
                   {eventsNeeded} entropy events collected
                 </span>
@@ -167,7 +167,7 @@ export default function EntropyCollector({ onComplete }: EntropyCollectorProps) 
             </div>
 
             <div className="flex items-center justify-center gap-3 text-sm">
-              <div className={`w-3 h-3 rounded-full ${isComplete ? 'bg-green-500' : 'bg-neuro-text-muted-light dark:bg-neuro-text-muted-dark'}`}></div>
+              <div className={`w-3 h-3 rounded-full ${isComplete ? 'bg-gray-500' : 'bg-neuro-text-muted-light dark:bg-neuro-text-muted-dark'}`}></div>
               <span className="font-bold text-neuro-text-secondary-light dark:text-neuro-text-secondary-dark">
                 {isComplete ? 'Collection complete!' : 'Collecting random data...'}
               </span>

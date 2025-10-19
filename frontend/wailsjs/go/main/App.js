@@ -22,6 +22,10 @@ export function DeleteVault() {
   return window['go']['main']['App']['DeleteVault']();
 }
 
+export function DeleteVaultAtPath(arg1) {
+  return window['go']['main']['App']['DeleteVaultAtPath'](arg1);
+}
+
 export function ExtractFile(arg1) {
   return window['go']['main']['App']['ExtractFile'](arg1);
 }

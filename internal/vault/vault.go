@@ -13,8 +13,8 @@ import (
 	"path/filepath"
 	"time"
 
-	"micryptlol/internal/bip39"
-	"micryptlol/internal/crypto"
+	"micrypt/internal/bip39"
+	"micrypt/internal/crypto"
 )
 
 const (

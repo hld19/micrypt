@@ -255,7 +255,7 @@ func deriveCascadeNonce(seed []byte, cipher *Cipher, index int) ([]byte, error) 
 	if seed == nil {
 		reader = rand.Reader
 	} else {
-		info := []byte("micryptlol/cascade/" + strconv.Itoa(index))
+		info := []byte("micrypt/cascade/" + strconv.Itoa(index))
 		reader = hkdf.New(sha256.New, seed, nil, info)
 	}
 

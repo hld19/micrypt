@@ -43,7 +43,7 @@ func TestDeriveChunkNonceHighCounter(t *testing.T) {
 }
 
 func TestCipherRoundTrip(t *testing.T) {
-	payload := bytes.Repeat([]byte("micryptlol"), 8)
+	payload := bytes.Repeat([]byte("micrypt"), 8)
 	cipherTypes := []CipherType{
 		AES256GCM,
 		Serpent256GCM,

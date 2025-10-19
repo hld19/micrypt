@@ -8,9 +8,9 @@ import (
 	"path/filepath"
 	"time"
 
-	"micryptlol/internal/bip39"
-	"micryptlol/internal/crypto"
-	"micryptlol/internal/vault"
+	"micrypt/internal/bip39"
+	"micrypt/internal/crypto"
+	"micrypt/internal/vault"
 
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
@@ -212,23 +212,38 @@ func (a *App) LockVault() error {
 	return nil
 }
 
+// TODO: Voeg de UI-implementatie toe zodra kluisverwijdering volledig getest is.
 func (a *App) DeleteVault() error {
-	path := ""
-	if a.currentVault != nil {
-		path = a.currentVault.GetPath()
-		a.currentVault.Lock()
-		a.currentVault = nil
-	} else if a.vaultPath != "" {
-		path = a.vaultPath
-	} else {
+	return a.DeleteVaultAtPath("")
+}
+
+func (a *App) DeleteVaultAtPath(path string) error {
+	target := path
+	if target == "" {
+		if a.currentVault != nil {
+			target = a.currentVault.GetPath()
+		} else if a.vaultPath != "" {
+			target = a.vaultPath
+		}
+	}
+
+	if target == "" {
 		return fmt.Errorf("no vault is currently open")
 	}
 
-	if err := vault.DeleteVault(path); err != nil {
+	if a.currentVault != nil && a.currentVault.GetPath() == target {
+		a.currentVault.Lock()
+		a.currentVault = nil
+	}
+
+	if err := vault.DeleteVault(target); err != nil {
 		return err
 	}
 
-	a.vaultPath = ""
+	if a.vaultPath == target {
+		a.vaultPath = ""
+	}
+
 	a.pendingMnemonic = nil
 	a.storedMnemonic = nil
 	a.entropyCollector = nil

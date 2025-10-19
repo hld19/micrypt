@@ -23,11 +23,11 @@ const NavItem = ({ icon, label, isActive, onClick, disabled }: NavItemProps) => 
     className={`group w-full flex items-center gap-3 px-4 py-3.5 rounded-2xl border transition-all duration-200
       ${disabled ? 'opacity-40 cursor-not-allowed' : 'cursor-pointer'}
       ${isActive
-        ? 'bg-slate-200 text-slate-900 border-slate-300 shadow-sm shadow-slate-400/40 dark:bg-slate-800 dark:text-slate-100 dark:border-slate-700'
-        : 'bg-slate-50/80 dark:bg-slate-900/40 border-slate-200/60 dark:border-slate-800 text-slate-600 dark:text-slate-300 hover:border-slate-400/70 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-100/80 dark:hover:bg-slate-800/60'}
+        ? 'bg-[#e6e6e6] text-gray-900 border-[#cfcfcf] shadow-sm shadow-black/10 dark:bg-[#1a1a1a] dark:text-gray-100 dark:border-[#2b2b2b]'
+        : 'bg-white/85 dark:bg-[#141414]/70 border-[#d6d6d6] dark:border-[#2b2b2b] text-gray-600 dark:text-gray-300 hover:border-[#a3a3a3] hover:text-gray-900 dark:hover:text-gray-100 hover:bg-[#f2f2f2] dark:hover:bg-[#1d1d1d]'}
     `}
   >
-    <span className={`flex h-9 w-9 items-center justify-center rounded-xl transition-transform duration-200 ${isActive ? 'bg-slate-300/60 dark:bg-slate-700/80' : 'bg-slate-100/70 dark:bg-slate-800/60 group-hover:bg-slate-200/70 dark:group-hover:bg-slate-700/70'}`}>
+    <span className={`flex h-9 w-9 items-center justify-center rounded-xl transition-transform duration-200 ${isActive ? 'bg-[#d9d9d9] dark:bg-[#2a2a2a]' : 'bg-[#efefef] dark:bg-[#1f1f1f] group-hover:bg-[#e0e0e0] dark:group-hover:bg-[#2a2a2a]'}`}>
       {icon}
     </span>
     <span className="text-sm font-semibold tracking-wide truncate">{label}</span>
@@ -36,14 +36,14 @@ const NavItem = ({ icon, label, isActive, onClick, disabled }: NavItemProps) => 
 
 export default function Sidebar({ currentView, onViewChange, isVaultUnlocked }: SidebarProps) {
   return (
-    <aside className="hidden md:flex w-72 h-full flex-col bg-slate-50/70 dark:bg-slate-950/45 backdrop-blur border-r border-slate-200/50 dark:border-slate-800 px-6 py-8">
+    <aside className="hidden md:flex w-72 h-full flex-col bg-white/80 dark:bg-[#0f0f0f]/80 backdrop-blur border-r border-[#d4d4d4] dark:border-[#1f1f1f] px-6 py-8">
       <div className="flex items-center gap-3 mb-10">
-        <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-200 text-slate-700 shadow-md shadow-slate-400/30 dark:bg-slate-800 dark:text-slate-100 dark:shadow-black/40">
+        <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#e5e5e5] text-[#1f1f1f] shadow-md shadow-black/10 dark:bg-[#1a1a1a] dark:text-gray-100 dark:shadow-black/50">
           <CatIcon size={22} />
         </div>
         <div>
-          <h1 className="text-xl font-semibold text-slate-900 dark:text-white tracking-tight">Micryptlol</h1>
-          <p className="text-xs font-medium text-slate-500 dark:text-slate-400">Offline vault</p>
+          <h1 className="text-xl font-semibold text-gray-900 dark:text-white tracking-tight">micrypt</h1>
+          <p className="text-xs font-medium text-gray-500 dark:text-gray-400">Offline vault</p>
         </div>
       </div>
 
@@ -77,14 +77,14 @@ export default function Sidebar({ currentView, onViewChange, isVaultUnlocked }: 
           disabled={!isVaultUnlocked}
         />
       </nav>
-      <div className="mt-10 space-y-2 text-xs text-slate-500 dark:text-slate-400">
-        <div className="rounded-2xl border border-slate-200/60 dark:border-slate-800 bg-slate-100/70 dark:bg-slate-900/45 px-4 py-4">
-          <p className="text-sm font-semibold text-slate-900 dark:text-white mb-1">Vault status</p>
-          <p className={`text-xs font-medium ${isVaultUnlocked ? 'text-white-600 dark:text-white-400' : 'text-slate-600 dark:text-slate-400'}`}>
+      <div className="mt-10 space-y-2 text-xs text-gray-500 dark:text-gray-400">
+        <div className="rounded-2xl border border-[#d9d9d9] dark:border-[#1f1f1f] bg-white/85 dark:bg-[#141414]/70 px-4 py-4">
+          <p className="text-sm font-semibold text-gray-900 dark:text-white mb-1">Vault status</p>
+          <p className={`text-xs font-medium ${isVaultUnlocked ? 'text-gray-700 dark:text-gray-300' : 'text-gray-600 dark:text-gray-400'}`}>
             {isVaultUnlocked ? 'Unlocked' : 'Locked'}
           </p>
         </div>
-        <p>&copy; {new Date().getFullYear()} micryptlol</p>
+        <p>&copy; {new Date().getFullYear()} micrypt</p>
       </div>
     </aside>
   );

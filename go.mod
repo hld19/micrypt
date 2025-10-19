@@ -1,4 +1,4 @@
-module micryptlol
+module micrypt
 
 go 1.24.0
 

@@ -9,6 +9,7 @@ import {
   LockVault,
   SelectVaultDirectory,
   DeleteVault,
+  DeleteVaultAtPath,
   SelectVaultFile,
   VaultExistsAtPath,
   GetHomeDirectory,
@@ -279,7 +280,8 @@ function App() {
     } catch (err: any) {
       const message = err?.toString?.() || 'Failed to unlock vault';
       setError(message);
-      if (message.toLowerCase().includes('no vault')) {
+      const normalized = message.toLowerCase();
+      if (normalized.includes('no vault') || normalized.includes('cannot be empty')) {
         setUnlockPathError('No vault file found at this location');
       }
     } finally {
@@ -493,11 +495,24 @@ function App() {
     }
   };
 
+  // TODO: Voeg de UI-implementatie voor kluisverwijdering later weer toe wanneer deze workflow stabiel is.
   const handleDeleteVault = async () => {
     if (deletePending) {
       return;
     }
-    if (!currentVaultPath) {
+    let resolvedPath = currentVaultPath.trim();
+    if (!resolvedPath) {
+      try {
+        const stats = await GetVaultStats();
+        resolvedPath = (stats?.vaultPath ?? '').trim();
+        if (resolvedPath) {
+          setCurrentVaultPath(resolvedPath);
+        }
+      } catch (statsErr) {
+        console.error('Failed to resolve vault path before deletion:', statsErr);
+      }
+    }
+    if (!resolvedPath) {
       setError('No vault file available to delete');
       return;
     }
@@ -509,8 +524,32 @@ function App() {
 
     setDeletePending(true);
     setError('');
+    let completed = false;
     try {
-      await DeleteVault();
+      await DeleteVaultAtPath(resolvedPath);
+      completed = true;
+    } catch (err: any) {
+      const message = err?.toString?.() || 'Failed to delete vault';
+      if (message.toLowerCase().includes('no vault')) {
+        try {
+          await DeleteVault();
+          completed = true;
+        } catch (fallbackErr: any) {
+          const fallbackMessage = fallbackErr?.toString?.() || 'Failed to delete vault';
+          setError(fallbackMessage);
+          window.alert(fallbackMessage);
+          setDeletePending(false);
+          return;
+        }
+      } else {
+        setError(message);
+        window.alert(message);
+        setDeletePending(false);
+        return;
+      }
+    }
+
+    if (completed) {
       setIsVaultUnlocked(false);
       setCurrentScreen('welcome');
       setCurrentView('files');
@@ -519,13 +558,9 @@ function App() {
       resetUnlockForm();
       resetRecoverForm();
       resetCreateForm();
-    } catch (err: any) {
-      const message = err?.toString?.() || 'Failed to delete vault';
-      setError(message);
-      window.alert(message);
-    } finally {
-      setDeletePending(false);
     }
+
+    setDeletePending(false);
   };
 
   const handleCopyVaultPath = async () => {
@@ -600,17 +635,17 @@ function App() {
       return null;
     }
     return (
-      <div className="fixed inset-0 z-40 flex items-center justify-center bg-slate-950/70 backdrop-blur px-6">
-        <div className="w-full max-w-md rounded-3xl border border-slate-200/70 dark:border-slate-800 bg-white/90 dark:bg-slate-900/85 shadow-2xl p-8 space-y-6">
+      <div className="fixed inset-0 z-40 flex items-center justify-center bg-gray-950/70 backdrop-blur px-6">
+        <div className="w-full max-w-md rounded-3xl border border-gray-200/70 dark:border-gray-800 bg-white/90 dark:bg-gray-900/85 shadow-2xl p-8 space-y-6">
           <div className="space-y-2 text-center">
-            <h3 className="text-2xl font-bold text-slate-900 dark:text-white">Confirm Identity</h3>
-            <p className="text-sm font-medium text-slate-500 dark:text-slate-400">
+            <h3 className="text-2xl font-bold text-gray-900 dark:text-white">Confirm Identity</h3>
+            <p className="text-sm font-medium text-gray-500 dark:text-gray-400">
               Re-enter your vault password to reveal the recovery phrase.
             </p>
           </div>
           <div className="space-y-4">
             <div className="space-y-2">
-              <label className="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
+              <label className="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">
                 Password
               </label>
               <input
@@ -627,7 +662,7 @@ function App() {
               />
             </div>
             <div className="space-y-2">
-              <label className="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
+              <label className="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">
                 PIM (optional)
               </label>
               <input
@@ -651,7 +686,7 @@ function App() {
               type="button"
               onClick={handleCancelSeedExport}
               disabled={seedPromptLoading}
-              className="w-full sm:w-auto px-5 py-2.5 text-sm font-bold text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200"
+              className="w-full sm:w-auto px-5 py-2.5 text-sm font-bold text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"
             >
               Cancel
             </button>
@@ -671,18 +706,18 @@ function App() {
 
   if (currentScreen === 'welcome') {
     return (
-      <div className="min-h-screen overflow-hidden bg-gradient-to-br from-slate-100 via-white to-slate-200 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950">
+      <div className="min-h-screen overflow-hidden bg-gradient-to-br from-gray-100 via-white to-gray-200 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950">
         <DragRegion />
         <div className="mx-auto w-full max-w-3xl px-4 py-12">
           <div className={`${panelClass} text-center intro-animation`}>
             <div className="flex justify-center">
-              <span className="flex h-24 w-24 items-center justify-center rounded-3xl bg-slate-300 text-white shadow-lg shadow-slate-400/40 dark:bg-slate-700 dark:shadow-black/40">
+              <span className="flex h-24 w-24 items-center justify-center rounded-3xl bg-gray-300 text-white shadow-lg shadow-gray-400/40 dark:bg-gray-700 dark:shadow-black/40">
                 <CatIcon size={42} />
               </span>
             </div>
             <div className="space-y-3">
-              <h1 className="text-5xl font-semibold text-slate-900 dark:text-white tracking-tight">Micryptlol</h1>
-              <p className="text-base text-slate-500 dark:text-slate-400">
+              <h1 className="text-5xl font-semibold text-gray-900 dark:text-white tracking-tight">micrypt</h1>
+              <p className="text-base text-gray-500 dark:text-gray-400">
                 Offline first vault with Argon2id, keyfile and PIM support, and mnemonic recovery. No network connection required.
               </p>
             </div>
@@ -722,8 +757,8 @@ function App() {
                 <KeyIcon size={20} />
               </button>
             </div>
-            <div className="rounded-2xl border border-slate-200/70 dark:border-slate-800 bg-white/70 dark:bg-slate-900/60 px-6 py-4">
-              <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide">
+            <div className="rounded-2xl border border-gray-200/70 dark:border-gray-800 bg-white/70 dark:bg-gray-900/60 px-6 py-4">
+              <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">
                 AES-256 · XChaCha20 · Argon2id · Offline
               </p>
             </div>
@@ -735,25 +770,25 @@ function App() {
 
   if (currentScreen === 'unlock') {
     return (
-      <div className="min-h-screen overflow-hidden bg-gradient-to-br from-slate-100 via-white to-slate-200 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950">
+      <div className="min-h-screen overflow-hidden bg-gradient-to-br from-gray-100 via-white to-gray-200 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950">
         <DragRegion />
         <div className="mx-auto w-full max-w-3xl px-4 py-12">
-          <div className={`${panelClass} space-y-6 text-left scroll-region`}>
+          <div className={`${panelClass} space-y-6 text-left scroll-region max-h-[calc(100vh-6rem)]`}>
             <div className="space-y-2">
               <div className="flex items-center gap-3">
-                <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-100 text-blue-600 dark:bg-blue-900/50 dark:text-blue-200">
+                <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gray-200 text-gray-800 dark:bg-gray-800/70 dark:text-gray-100">
                   <LockIcon size={24} />
                 </span>
                 <div>
-                  <h2 className="text-3xl font-semibold text-slate-900 dark:text-white">Unlock vault</h2>
-                  <p className="text-sm text-slate-500 dark:text-slate-400">Enter your password, keyfiles, or PIM to continue.</p>
+                  <h2 className="text-3xl font-semibold text-gray-900 dark:text-white">Unlock vault</h2>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">Enter your password, keyfiles, or PIM to continue.</p>
                 </div>
               </div>
             </div>
 
             <div className="space-y-5">
               <div>
-                <label className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide">Password</label>
+                <label className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Password</label>
                 <input
                   type="password"
                   value={unlockPassword}
@@ -770,7 +805,7 @@ function App() {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                 <div>
-                  <label className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide">PIM (optional)</label>
+                  <label className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">PIM (optional)</label>
                   <input
                     type="number"
                     min="0"
@@ -785,7 +820,7 @@ function App() {
                   />
                 </div>
                 <div>
-                  <label className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide">Keyfiles</label>
+                  <label className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Keyfiles</label>
                   <input
                     type="file"
                     multiple
@@ -796,14 +831,14 @@ function App() {
                       }
                     }}
                     disabled={loading}
-                    className="mt-2 text-sm text-slate-600 dark:text-slate-300"
+                    className="mt-2 text-sm text-gray-600 dark:text-gray-300"
                   />
                   {renderKeyfileList(unlockKeyfiles, (index) => handleRemoveKeyfile(index, setUnlockKeyfiles))}
                 </div>
               </div>
 
               <div>
-                <label className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide">Vault file</label>
+                <label className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Vault file</label>
                 <div className="mt-2 space-y-2">
                   <div className="flex flex-col md:flex-row md:items-center md:gap-3">
                     <button
@@ -815,11 +850,11 @@ function App() {
                       Choose vault file
                     </button>
                     {unlockPath ? (
-                      <span className="text-xs font-semibold text-slate-600 dark:text-slate-300 truncate md:max-w-xs lg:max-w-sm" title={unlockPath}>
+                      <span className="text-xs font-semibold text-gray-600 dark:text-gray-300 truncate md:max-w-xs lg:max-w-sm" title={unlockPath}>
                         {unlockPath}
                       </span>
                     ) : (
-                      <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">
+                      <span className="text-xs text-gray-500 dark:text-gray-400 font-medium">
                         Leave empty to pick when prompted
                       </span>
                     )}
@@ -864,18 +899,18 @@ function App() {
 
   if (currentScreen === 'create') {
     return (
-      <div className="min-h-screen overflow-hidden bg-gradient-to-br from-slate-100 via-white to-slate-200 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950">
+      <div className="min-h-screen overflow-hidden bg-gradient-to-br from-gray-100 via-white to-gray-200 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950">
         <DragRegion />
         <div className="mx-auto w-full max-w-3xl px-4 py-12">
-          <div className={`${panelClass} space-y-6 text-left scroll-region`}>
+          <div className={`${panelClass} space-y-6 text-left scroll-region max-h-[calc(100vh-6rem)]`}>
             <div className="space-y-2">
               <div className="flex items-center gap-3">
-                <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-green-100 text-green-600 dark:bg-green-900/40 dark:text-green-300">
+                <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gray-200 text-gray-800 dark:bg-gray-800/70 dark:text-gray-100">
                   <ShieldIcon size={24} />
                 </span>
                 <div>
-                  <h2 className="text-3xl font-semibold text-slate-900 dark:text-white">Create new vault</h2>
-                  <p className="text-sm text-slate-500 dark:text-slate-400">Select algorithm, define your password, and optionally load keyfiles and PIM.</p>
+                  <h2 className="text-3xl font-semibold text-gray-900 dark:text-white">Create new vault</h2>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">Select algorithm, define your password, and optionally load keyfiles and PIM.</p>
                 </div>
               </div>
             </div>
@@ -888,14 +923,14 @@ function App() {
                   <button
                     key={algo.id}
                     onClick={() => setSelectedAlgorithm(algo.id)}
-                    className={`flex items-center gap-4 rounded-2xl border px-5 py-4 text-left transition ${selected ? 'border-blue-400 bg-blue-50/70 dark:bg-blue-900/30 dark:border-blue-400 text-blue-800 dark:text-blue-100' : 'border-slate-200/70 dark:border-slate-800 bg-white/70 dark:bg-slate-900/60 text-slate-600 dark:text-slate-300 hover:border-blue-300/70 hover:text-slate-900 dark:hover:text-white'}`}
+                    className={`flex items-center gap-4 rounded-2xl border px-5 py-4 text-left transition ${selected ? 'border-gray-500 bg-gray-100 dark:bg-gray-800/70 dark:border-gray-500 text-gray-900 dark:text-gray-100' : 'border-gray-200/70 dark:border-gray-800 bg-white/70 dark:bg-gray-900/60 text-gray-600 dark:text-gray-300 hover:border-gray-500/70 hover:text-gray-900 dark:hover:text-white'}`}
                   >
-                    <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-100/80 text-blue-600 dark:bg-blue-900/40 dark:text-blue-200">
+                    <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gray-200/80 text-gray-800 dark:bg-gray-800/60 dark:text-gray-100">
                       <Icon size={22} />
                     </span>
                     <div className="flex-1">
-                      <div className="text-sm font-semibold text-slate-900 dark:text-white">{algo.name}</div>
-                      <div className="text-xs text-slate-500 dark:text-slate-400">{algo.description}</div>
+                      <div className="text-sm font-semibold text-gray-900 dark:text-white">{algo.name}</div>
+                      <div className="text-xs text-gray-500 dark:text-gray-400">{algo.description}</div>
                     </div>
                     {selected && <span className="badge-tonal">Selected</span>}
                   </button>
@@ -904,7 +939,7 @@ function App() {
             </div>
 
             <div className="space-y-2">
-              <label className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide">Vault file</label>
+              <label className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Vault file</label>
               <div className="space-y-2">
                 <div className="flex flex-col md:flex-row md:items-center md:gap-3">
                   <button
@@ -915,7 +950,7 @@ function App() {
                   >
                     Choose vault file
                   </button>
-                  <span className="text-xs font-medium text-slate-500 dark:text-slate-400 md:max-w-sm truncate" title={createVaultPath || homeDirectory}>
+                  <span className="text-xs font-medium text-gray-500 dark:text-gray-400 md:max-w-sm truncate" title={createVaultPath || homeDirectory}>
                     {createVaultPath
                       ? `${createVaultPath}`
                       : homeDirectory
@@ -930,7 +965,7 @@ function App() {
             </div>
 
             <div className="space-y-2">
-              <label className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide">Master password</label>
+              <label className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Master password</label>
               <input
                 type="password"
                 value={createPassword}
@@ -942,7 +977,7 @@ function App() {
                 disabled={loading}
                 className={inputClass}
               />
-              <p className="text-xs text-slate-500 dark:text-slate-400">
+              <p className="text-xs text-gray-500 dark:text-gray-400">
                 {createPassword.length === 0
                   ? 'Minimum 8 characters required'
                   : createPassword.length < 8
@@ -952,7 +987,7 @@ function App() {
             </div>
 
             <div className="space-y-2">
-              <label className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide">Confirm password</label>
+              <label className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Confirm password</label>
               <input
                 type="password"
                 value={createConfirm}
@@ -969,7 +1004,7 @@ function App() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               <div>
-                <label className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide">PIM (optional)</label>
+                <label className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">PIM (optional)</label>
                 <input
                   type="number"
                   min="0"
@@ -984,7 +1019,7 @@ function App() {
                 />
               </div>
               <div>
-                <label className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide">Keyfiles</label>
+                <label className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Keyfiles</label>
                 <input
                   type="file"
                   multiple
@@ -995,7 +1030,7 @@ function App() {
                     }
                   }}
                   disabled={loading}
-                  className="mt-2 text-sm text-slate-600 dark:text-slate-300"
+                  className="mt-2 text-sm text-gray-600 dark:text-gray-300"
                 />
                 {renderKeyfileList(createKeyfiles, (index) => handleRemoveKeyfile(index, setCreateKeyfiles))}
               </div>
@@ -1098,8 +1133,8 @@ function App() {
                       disabled={loading}
                       className={`px-4 py-2 rounded-full text-sm font-bold border transition ${
                         recoverWordMode === option
-                          ? 'bg-blue-500 text-white border-blue-500 shadow-lg shadow-blue-500/30'
-                          : 'bg-white/70 dark:bg-slate-900/50 text-neuro-text-secondary-light dark:text-neuro-text-secondary-dark border-slate-200/70 dark:border-slate-800 hover:border-blue-300/70'
+                          ? 'bg-gray-800 text-white border-gray-700 shadow-lg shadow-black/30'
+                          : 'bg-white/70 dark:bg-gray-900/50 text-neuro-text-secondary-light dark:text-neuro-text-secondary-dark border-gray-200/70 dark:border-gray-800 hover:border-gray-500/70'
                       }`}
                     >
                       {option} words
@@ -1123,8 +1158,8 @@ function App() {
                       key={index}
                       className={`flex items-center gap-3 rounded-2xl border px-4 py-3 transition ${
                         filled
-                          ? 'border-blue-500/40 bg-blue-500/5'
-                          : 'border-slate-200/70 dark:border-slate-800 bg-white/70 dark:bg-slate-900/50'
+                          ? 'border-gray-500/50 bg-gray-700/10'
+                          : 'border-gray-200/70 dark:border-gray-800 bg-white/70 dark:bg-gray-900/50'
                       }`}
                     >
                       <span className="w-7 text-center text-xs font-bold text-neuro-text-secondary-light dark:text-neuro-text-secondary-dark">

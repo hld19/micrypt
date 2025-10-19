@@ -99,7 +99,7 @@ export default function FilesView() {
       <header className="p-8 bg-neuro-bg-light dark:bg-neuro-bg-dark shadow-neuro-light-sm dark:shadow-neuro-dark-sm">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h2 className="text-5xl font-bold text-blue-600 dark:text-blue-400 mb-2 tracking-tight">
+            <h2 className="text-5xl font-bold text-gray-900 dark:text-gray-100 mb-2 tracking-tight">
               Files
             </h2>
             <p className="text-neuro-text-secondary-light dark:text-neuro-text-secondary-dark font-semibold text-lg">Manage your encrypted files</p>
@@ -143,7 +143,7 @@ export default function FilesView() {
           <div className="flex items-center justify-center h-full">
             <div className="text-center space-y-5">
               <div className="w-20 h-20 rounded-full bg-neuro-bg-light dark:bg-neuro-bg-dark shadow-neuro-light dark:shadow-neuro-dark flex items-center justify-center mx-auto">
-                <div className="w-12 h-12 border-4 border-gray-300 dark:border-gray-700 border-t-blue-500 rounded-full"></div>
+                <div className="w-12 h-12 border-4 border-gray-300 dark:border-gray-700 border-t-gray-500 rounded-full"></div>
               </div>
               <p className="text-neuro-text-secondary-light dark:text-neuro-text-secondary-dark font-bold text-lg">Loading files...</p>
             </div>
@@ -155,7 +155,7 @@ export default function FilesView() {
               <button
                 type="button"
                 onClick={handleAddFiles}
-                className="inline-flex h-16 w-16 items-center justify-center rounded-3xl bg-slate-200/80 dark:bg-slate-800/60 text-slate-600 dark:text-slate-200 shadow-md shadow-slate-400/30 transition hover:bg-slate-300/80 dark:hover:bg-slate-700/70 focus:outline-none focus:ring-2 focus:ring-slate-400/60"
+                className="inline-flex h-16 w-16 items-center justify-center rounded-3xl bg-gray-200/80 dark:bg-gray-800/60 text-gray-600 dark:text-gray-200 shadow-md shadow-gray-400/30 transition hover:bg-gray-300/80 dark:hover:bg-gray-700/70 focus:outline-none focus:ring-2 focus:ring-gray-400/60"
               >
                 <PlusIcon size={32} />
               </button>
@@ -189,7 +189,7 @@ export default function FilesView() {
                       {file.originalName}
                     </h4>
                     <div className="flex items-center gap-3 text-sm">
-                      <span className="px-4 py-1.5 rounded-neuro-sm bg-purple-500 text-white text-xs font-bold capitalize shadow-lg">
+                      <span className="px-4 py-1.5 rounded-neuro-sm bg-gray-700 text-white text-xs font-bold capitalize shadow-lg">
                         {file.category}
                       </span>
                       <span className="text-neuro-text-muted-light dark:text-neuro-text-muted-dark font-bold">{formatFileSize(file.size)}</span>

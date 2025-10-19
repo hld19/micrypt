@@ -21,7 +21,7 @@ const (
 	passwordVerifierLength = 32
 	passSeedXORLength      = 32
 	SaltLength             = 32
-	kdfInfoLabel           = "micryptlol/v1/key-schedule"
+	kdfInfoLabel           = "micrypt/v1/key-schedule"
 	KDFMetadataVersion     = 1
 	maxPIMIncrement        = 1000000
 )

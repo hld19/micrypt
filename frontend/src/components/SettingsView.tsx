@@ -1,4 +1,4 @@
-import { LockIcon, ShieldIcon, KeyIcon, AlertIcon, InfoIcon } from './Icons';
+import { LockIcon, ShieldIcon, KeyIcon, InfoIcon } from './Icons';
 
 interface SettingsViewProps {
   isVaultUnlocked: boolean;
@@ -22,12 +22,15 @@ export default function SettingsView({
   deletePending,
 }: SettingsViewProps) {
   const hasVaultPath = Boolean(vaultPath);
+  // TODO: Gebruik onDeleteVault opnieuw zodra de kluisverwijderingsinterface terugkeert.
+  void onDeleteVault;
+  void deletePending;
 
   return (
     <div className="h-full flex flex-col bg-neuro-bg-light dark:bg-neuro-bg-dark scroll-region">
       <header className="p-8 bg-neuro-bg-light dark:bg-neuro-bg-dark shadow-neuro-light-sm dark:shadow-neuro-dark-sm sticky top-0 z-10">
         <div>
-          <h2 className="text-5xl font-bold text-blue-600 dark:text-blue-400 mb-2 tracking-tight">Settings</h2>
+          <h2 className="text-5xl font-bold text-gray-900 dark:text-gray-100 mb-2 tracking-tight">Settings</h2>
           <p className="text-neuro-text-secondary-light dark:text-neuro-text-secondary-dark font-semibold text-lg">
             Manage vault status, security options, and recovery tools
           </p>
@@ -58,7 +61,7 @@ export default function SettingsView({
                     {isVaultUnlocked ? 'Unlocked' : 'Locked'}
                   </div>
                 </div>
-                <div className={`px-3 py-1.5 rounded-full text-xs font-semibold ${isVaultUnlocked ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400' : 'bg-slate-500/10 text-slate-600 dark:text-slate-300'}`}>
+                <div className={`px-3 py-1.5 rounded-full text-xs font-semibold ${isVaultUnlocked ? 'bg-gray-900 text-white dark:bg-gray-200 dark:text-gray-900' : 'bg-gray-200 text-gray-700 dark:bg-gray-800 dark:text-gray-200'}`}>
                   {isVaultUnlocked ? 'Active session' : 'Requires authentication'}
                 </div>
               </div>
@@ -143,31 +146,6 @@ export default function SettingsView({
                 {lockPending ? 'Locking…' : 'Lock now'}
               </button>
             </div>
-          </div>
-        </section>
-
-        <section className="bg-neuro-bg-light dark:bg-neuro-bg-dark rounded-neuro-lg p-7 shadow-neuro-light dark:shadow-neuro-dark border-2 border-red-500/30">
-          <div className="flex items-center gap-4 mb-7">
-            <div className="w-16 h-16 rounded-neuro bg-neuro-bg-light dark:bg-neuro-bg-dark shadow-neuro-light dark:shadow-neuro-dark flex items-center justify-center">
-              <AlertIcon size={32} className="text-red-600 dark:text-red-400" />
-            </div>
-            <h3 className="text-3xl font-bold text-red-600 dark:text-red-400">Danger Zone</h3>
-          </div>
-          <div className="p-5 rounded-neuro bg-neuro-bg-light dark:bg-neuro-bg-dark shadow-neuro-light-inset dark:shadow-neuro-dark-inset border-l-4 border-red-500">
-            <div>
-              <div className="text-base font-bold text-red-600 dark:text-red-400 mb-1.5">Delete vault</div>
-              <div className="text-sm text-red-600/80 dark:text-red-400/80 font-semibold">
-                Securely erase the vault file from disk. This action cannot be undone.
-              </div>
-            </div>
-            <button
-              type="button"
-              onClick={onDeleteVault}
-              disabled={!hasVaultPath || deletePending}
-              className={`neuro-card px-5 py-2.5 rounded-neuro text-neuro-text-primary-light dark:text-neuro-text-primary-dark text-sm font-bold transition ${!hasVaultPath || deletePending ? 'opacity-40 cursor-not-allowed' : ''}`}
-            >
-              {deletePending ? 'Deleting…' : 'Delete vault'}
-            </button>
           </div>
         </section>
 
