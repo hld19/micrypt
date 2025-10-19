@@ -1,6 +1,8 @@
-![Micrypt logo](frontend/appicon.png)
+![Micrypt logo](ok/ok.png)
 
 # Micrypt
+Available languages:
+- [English](readme.nl.md)
 
 Micrypt is a desktop vault that protects files with strong encryption using Go and Wails.
 
