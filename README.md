@@ -1,4 +1,4 @@
-![Micrypt logo](build/appicon.png)
+![Micrypt logo](frontend/appicon.png)
 
 # Micrypt
 
@@ -22,6 +22,7 @@ Run the frontend install steps once.
 cd frontend
 npm install
 cd ..
+cd micrypt
 ```
 
 ## Development
