@@ -43,14 +43,6 @@ Create a distributable build.
 make build
 ```
 
-## Tests
-
-Run all Go test suites.
-
-```sh
-GOCACHE=$(pwd)/.gocache go test ./...
-```
-
 ## Data Flow
 
 1. The React interface triggers actions through the Wails runtime.

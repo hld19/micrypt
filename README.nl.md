@@ -40,13 +40,7 @@ Maak een distributie build.
 make build
 ```
 
-## Tests
 
-Voer alle Go testen uit.
-
-```sh
-GOCACHE=$(pwd)/.gocache go test ./...
-```
 
 ## Data Flow
 
