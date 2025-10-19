@@ -2,7 +2,7 @@
 
 # Micrypt
 Available languages:
-- [English](readme.nl.md)
+- [Dutch](readme.nl.md)
 
 Micrypt is a desktop vault that protects files with strong encryption using Go and Wails.
 
