@@ -1,4 +1,4 @@
-![Micrypt logo](build/appicon.png)
+![Micrypt logo](ok/ok.png)
 
 # Micrypt
 
