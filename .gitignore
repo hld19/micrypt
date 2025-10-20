@@ -1,5 +1,5 @@
 build/
-!build/appicon.png
+!/ok/appicon.png
 build/icons.iconset/
 build/icons.icns
 *.app

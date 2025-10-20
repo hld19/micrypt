@@ -18,10 +18,10 @@
     "comments": "lolok"
   },
   "nsisinstaller": {
-    "icon": "build/appicon.png"
+    "icon": "/ok/appicon.png"
   },
   "assetdir": "frontend/dist",
-  "appicon": "build/appicon.png",
+  "appicon": "/ok/appicon.png",
   "macosicon": "build/icons.icns",
-  "windowsicon": "build/appicon.png"
+  "windowsicon": "/ok/appicon.png"
 }
