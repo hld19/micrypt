@@ -1,6 +1,8 @@
 ![Micrypt logo](ok/ok.png)
 
 # Micrypt
+Made for macos 
+
 Available languages:
 - [Dutch](README.nl.md)
 
@@ -15,6 +17,7 @@ Micrypt derives master keys with argon2id using user passwords, optional PIM val
 1. Go 1.24 or newer
 2. Node 18 or newer
 3. npm
+4. wails 
 
 ## Setup
 
