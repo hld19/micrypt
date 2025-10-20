@@ -1,7 +1,4 @@
 build/
-!/ok/appicon.png
-build/icons.iconset/
-build/icons.icns
 *.app
 *.exe
 *.dll
